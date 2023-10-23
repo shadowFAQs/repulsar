@@ -9,6 +9,7 @@ class Game():
 	def __init__(self, screen_dims):
 		self.stage_dims = screen_dims
 
+		self.font           = pg.font.Font('FiraCode-Regular.ttf', 10)
 		self.image          = pg.Surface(screen_dims)
 		self.paused         = True
 		self.robo           = None  # Char
@@ -35,6 +36,12 @@ class Game():
 		self.image.fill(COLOR_REF['black'])
 		self.image.blit(self.robo.sprite, tuple(self.robo.pos))
 
+		velocity = f'{round(self.robo.velocity.x, 1)}, {round(self.robo.velocity.y, 1)}'
+		velocity_x = self.font.render(velocity, False, COLOR_REF['yellow'])
+		self.image.blit(velocity_x, (100, 10))
+
+		self.image.blit(self.font.render(str(self.robo.charge), False, COLOR_REF['cyan']), (130, 25))
+
 	def unpause(self):
 		self.paused = False
 
@@ -43,9 +50,9 @@ class Game():
 			self.robo.update(delta, controller)
 			out_of_bounds_x, out_of_bounds_y = self.check_stage_boundaries(self.robo.get_rect_vector())
 			if out_of_bounds_x or out_of_bounds_y:
-				self.robo.stop_at_stage_boundary(out_of_bounds_x, out_of_bounds_y, self.stage_dims)
+				self.robo.stop_at_stage_boundary(out_of_bounds_x, out_of_bounds_y, self.stage_dims, controller)
 
-			self.robo.advance_to_next_pos()
+			self.robo.advance_to_rect_pos()
 
 		self.draw()
 
